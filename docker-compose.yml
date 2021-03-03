@@ -1,0 +1,28 @@
+version: '2'
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:12.0.4
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=password
+    ports:
+      - 8080:8080
+  mongodb:
+    image: 'docker.io/bitnami/mongodb:4.2-debian-10'
+  parse:
+    image: 'docker.io/bitnami/parse:4-debian-10'
+    ports:
+      - '1337:1337'
+    depends_on:
+      - mongodb
+      - keycloak
+  parse-dashboard:
+    image: 'bitnami/parse-dashboard:latest'
+    ports:
+      - '80:4040'
+    environment:
+      - PARSE_DASHBOARD_USER=admin
+      - PARSE_DASHBOARD_PASSWORD=password
+      - PARSE_HOST=localhost
+    depends_on:
+      - parse
