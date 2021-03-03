@@ -10,12 +10,16 @@ services:
   mongodb:
     image: 'docker.io/bitnami/mongodb:4.2-debian-10'
   parse:
-    image: 'docker.io/bitnami/parse:4-debian-10'
+    image: 'parseplatform/parse-server:4.5.0'
     ports:
       - '1337:1337'
     depends_on:
       - mongodb
       - keycloak
+    environment:
+      - PARSE_SERVER_DATABASE_URI=mongodb://mongodb:27017/parse
+      - PARSE_SERVER_APPLICATION_ID=myappID
+      - PARSE_SERVER_MASTER_KEY=mymasterKey
   parse-dashboard:
     image: 'bitnami/parse-dashboard:latest'
     ports:
