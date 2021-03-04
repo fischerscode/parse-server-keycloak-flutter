@@ -1,6 +1,6 @@
 # parse_keycloak
 
-A playground for authentificating a parse based Flutter application against a KeyCloak server.
+A playground for authenticating a parse based Flutter application against a KeyCloak server using an ldap user federation.
 
 ## Getting Started
 
@@ -18,3 +18,8 @@ docker-compose down
 ```shell script
 docker-compose down -v
 ```
+
+### Links
+- [phpldapadmin](http://localhost:8081) (login: `cn=admin,dc=example,dc=org`, password: `password`)
+- [KeyCloak](http://localhost:8080) (login: `admin`, password: `password`)
+
