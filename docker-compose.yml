@@ -7,12 +7,17 @@ services:
       - KEYCLOAK_PASSWORD=password
     ports:
       - 8080:8080
+      - 8443:8443
+    volumes:
+      - ./keycloak.crt:/etc/x509/https/tls.crt
+      - ./keycloak.key:/etc/x509/https/tls.key
     depends_on:
       - openldap
   mongodb:
     image: 'docker.io/bitnami/mongodb:4.2-debian-10'
   parse:
-    image: 'parseplatform/parse-server:4.5.0'
+#    image: 'parseplatform/parse-server:4.5.0'
+    image: 'parse-server:4.5.0'
     ports:
       - '1337:1337'
     depends_on:
@@ -22,7 +27,10 @@ services:
       - PARSE_SERVER_DATABASE_URI=mongodb://mongodb:27017/parse
       - PARSE_SERVER_APPLICATION_ID=myappID
       - PARSE_SERVER_MASTER_KEY=mymasterKey
-      - PARSE_SERVER_AUTH_PROVIDERS={"ldap":{"url":"ldap://192.168.178.65","suffix":"dc=example,dc=org","dn":"uid={{id}},ou=users,dc=example,dc=org"}}
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - KEYCLOAK_FRONTEND_URL=https://192.168.178.65:8443/auth
+#      - PARSE_SERVER_AUTH_PROVIDERS={"ldap":{"url":"ldap://192.168.178.65","suffix":"dc=example,dc=org","dn":"uid={{id}},ou=users,dc=example,dc=org"},"keycloak":{"config":{"realm":"master","auth-server-url":"https://192.168.178.65:8443/auth","ssl-required":"none","resource":"flutter","public-client":true,"confidential-port":0}}}
+      - PARSE_SERVER_AUTH_PROVIDERS={"ldap":{"url":"ldap://192.168.178.65","suffix":"dc=example,dc=org","dn":"uid={{id}},ou=users,dc=example,dc=org"},"keycloak":{"config":{"realm":"master","auth-server-url":"192.168.178.65","ssl-required":"external","resource":"flutter","public-client":true,"confidential-port":0}}}
   parse-dashboard:
     image: 'bitnami/parse-dashboard:latest'
     ports:

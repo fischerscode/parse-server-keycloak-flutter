@@ -1,8 +1,13 @@
 # parse_keycloak
 
-A playground for authenticating a parse based Flutter application against a KeyCloak server using an ldap user federation.
+A playground for authenticating a parse based Flutter application against a KeyCloak server using openid.
 
 ## Getting Started
+
+### Generate SSL cert for keycloak:
+```
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout keycloak.key -out keycloak.crt
+```
 
 ### Start servers
 ```shell script
