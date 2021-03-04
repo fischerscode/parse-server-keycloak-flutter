@@ -7,6 +7,8 @@ services:
       - KEYCLOAK_PASSWORD=password
     ports:
       - 8080:8080
+    depends_on:
+      - openldap
   mongodb:
     image: 'docker.io/bitnami/mongodb:4.2-debian-10'
   parse:
@@ -20,6 +22,7 @@ services:
       - PARSE_SERVER_DATABASE_URI=mongodb://mongodb:27017/parse
       - PARSE_SERVER_APPLICATION_ID=myappID
       - PARSE_SERVER_MASTER_KEY=mymasterKey
+      - PARSE_SERVER_AUTH_PROVIDERS={"ldap":{"url":"ldap://192.168.178.65","suffix":"dc=example,dc=org","dn":"uid={{id}},ou=users,dc=example,dc=org"}}
   parse-dashboard:
     image: 'bitnami/parse-dashboard:latest'
     ports:
@@ -30,3 +33,25 @@ services:
       - PARSE_HOST=localhost
     depends_on:
       - parse
+  openldap:
+    image: osixia/openldap:1.5.0
+    container_name: openldap
+    environment:
+      LDAP_LOG_LEVEL: "256"
+      LDAP_ORGANISATION: "Example Inc."
+      LDAP_DOMAIN: "example.org"
+      LDAP_BASE_DN: ""
+      LDAP_ADMIN_PASSWORD: "password"
+    ports:
+      - "389:389"
+      - "636:636"
+  phpldapadmin:
+    image: osixia/phpldapadmin:latest
+    container_name: phpldapadmin
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: "openldap"
+      PHPLDAPADMIN_HTTPS: "false"
+    ports:
+      - "8081:80"
+    depends_on:
+      - openldap
